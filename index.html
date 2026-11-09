@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Origo Sains</title>
+<style>
+:root{--bg:#fff;--sf:#f1fafb;--tx:#12202b;--pr:#00bcd4;--wr:#ff9800;--ok:#4caf50}
+body[data-t=dark]{--bg:#121821;--sf:#1c2531;--tx:#fff;--pr:#26d9ee;--wr:#ffb033;--ok:#66c96a}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0;height:100%;overflow:hidden;font:15px system-ui,sans-serif;background:var(--bg);color:var(--tx);touch-action:none;user-select:none}
+#c{position:fixed;inset:0;width:100%;height:100%}
+button,select,input{font:inherit;border-radius:10px;border:1px solid var(--pr);padding:9px 12px;background:var(--bg);color:var(--tx)}
+button{background:var(--pr);color:#fff;border:0;font-weight:700}
+#top{position:fixed;top:0;left:0;right:0;display:flex;gap:8px;padding:8px;z-index:9;justify-content:flex-end}
+#top button{background:var(--sf);color:var(--pr);border:1px solid var(--pr)}
+.ov{position:fixed;inset:0;background:var(--bg);z-index:5;padding:60px 14px 14px;overflow:auto;touch-action:pan-y}
+#menu{text-align:center;padding-top:18vh}
+#menu h1{color:var(--pr);margin:0;font-size:38px}#menu p{color:var(--ok);margin:4px 0 24px;font-weight:600}
+#menu button{display:block;width:min(260px,80%);margin:10px auto;padding:14px}
+#menu .o{background:var(--wr)}#menu small{display:block;margin:22px auto;max-width:300px;opacity:.7}
+.f{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:8px 0}#q{width:100%}
+.r{display:flex;align-items:center;gap:8px;padding:10px;border-bottom:1px solid var(--sf)}
+.r b{flex:1}.r span{opacity:.7;font-size:13px}.r i{font-style:normal;color:#fff;border-radius:8px;padding:2px 7px;font-size:12px;background:var(--ok)}
+.r i.h2{background:var(--pr)}.r i.h3,.r i.h4{background:var(--wr)}.r button{padding:6px 10px}
+#pg{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:10px}
+#hud{position:fixed;inset:0;pointer-events:none;z-index:2}
+#hud button,#js{pointer-events:auto}
+#x{position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px;border-radius:50%;border:2px solid var(--pr);background:#fff8}
+#pr{position:absolute;left:0;right:0;bottom:150px;text-align:center;font-weight:700;color:var(--pr);text-shadow:0 0 4px var(--bg),0 0 4px var(--bg)}
+#log{position:absolute;left:10px;right:10px;top:56px;text-align:center;font-weight:600;color:var(--wr);text-shadow:0 0 4px var(--bg),0 0 4px var(--bg)}
+#inf{position:absolute;left:10px;top:90px;background:var(--bg);opacity:.9;border:1px solid var(--pr);border-radius:10px;padding:6px 10px;max-width:60%;font-size:13px}
+#js{position:absolute;left:20px;bottom:20px;width:120px;height:120px;border-radius:50%;background:var(--sf);border:2px solid var(--pr);opacity:.85}
+#kn{position:absolute;left:40px;top:40px;width:40px;height:40px;border-radius:50%;background:var(--pr)}
+#act,#pour{position:absolute;right:16px;width:84px;height:84px;border-radius:50%}
+#act{bottom:20px;background:var(--wr)}#pour{bottom:116px;background:var(--ok)}
+</style></head><body data-t="light">
+<canvas id="c"></canvas>
+<div id="top"><button id="bm">☰</button><button id="bb">📖</button><button id="bl">ID</button><button id="bt">◐</button></div>
+<div id="hud"><div id="x"></div><div id="log"></div><div id="inf" hidden></div><div id="pr"></div>
+<div id="js"><div id="kn"></div></div><button id="pour" data-i="pour"></button><button id="act" data-i="act"></button></div>
+<div id="menu" class="ov"><h1 data-i="title"></h1><p data-i="sub"></p>
+<button id="go" class="o" data-i="enter"></button><button id="mb" data-i="book"></button><small data-i="hint"></small></div>
+<div id="book" class="ov" hidden><input id="q"><div class="f"><select id="fl"></select><select id="fc"></select><select id="fh"></select></div>
+<div id="ls"></div><div id="pg"><button id="pp">‹</button><span id="pn"></span><button id="pnx">›</button></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="data.js"></script><script src="app.js"></script></body></html>
