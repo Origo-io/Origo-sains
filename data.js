@@ -29,7 +29,7 @@ const RULES=[
 const I18N={
 id:{title:"Origo Sains",sub:"Simulasi Laboratorium 3D",enter:"Masuk Lab",book:"Buku Indeks",search:"Cari bahan...",all:"Semua",letter:"Abjad",
 cat:"Jenis zat",hz:"Bahaya",fetch:"Ambil",prev:"‹",next:"›",open:"Buka",close:"Tutup",place:"Letakkan",pick:"Ambil",act:"Aksi",pour:"Tuang",
-hint:"Geser layar = melihat · Joystick = jalan · Aksi = buka/ambil/letakkan · Tuang = tuang isi ke wadah yang dibidik",
+hint:"Joystick = jalan · geser layar = melihat · KETUK objek untuk buka/ambil/letakkan · ketuk wadah saat memegang bahan = tuang",
 hand_empty:"Tangan kosong",aim:"Bidik wadah gelas",full:"Wadah penuh",empty:"Wadah kosong",no_slot:"Tidak ada tempat kosong",fetched:"Diambil: ",
 tube:"Tabung Reaksi",beaker:"Gelas Beaker",erlen:"Erlenmeyer",petri:"Cawan Petri",pipette:"Pipet",bottle:"Botol",
 c_chem:"Kimia",c_acid:"Asam",c_base:"Basa",c_salt:"Garam",c_solvent:"Pelarut",c_ind:"Indikator",c_bio:"Biologi",c_phys:"Fisika",
@@ -37,7 +37,7 @@ neutralize:"Netralisasi: panas dilepaskan.",fizz:"Gelembung gas terbentuk!",dilu
 precipitate:"Endapan terbentuk.",colorchange:"Warna berubah!",smoke:"Asap & gas keluar. Hati-hati!",gc:"Lemari Gelas",cc:"Lemari Bahan"},
 en:{title:"Origo Sains",sub:"3D Laboratory Simulator",enter:"Enter Lab",book:"Index Book",search:"Search materials...",all:"All",letter:"Alphabet",
 cat:"Substance type",hz:"Hazard",fetch:"Fetch",prev:"‹",next:"›",open:"Open",close:"Close",place:"Place",pick:"Pick up",act:"Action",pour:"Pour",
-hint:"Drag = look · Joystick = move · Action = open/pick/place · Pour = pour into the vessel you aim at",
+hint:"Joystick = move · drag = look · TAP objects to open/pick/place · tap a vessel while holding a material = pour",
 hand_empty:"Hands empty",aim:"Aim at a glass vessel",full:"Vessel is full",empty:"Vessel is empty",no_slot:"No free slot",fetched:"Fetched: ",
 tube:"Test Tube",beaker:"Beaker",erlen:"Erlenmeyer",petri:"Petri Dish",pipette:"Pipette",bottle:"Bottle",
 c_chem:"Chemistry",c_acid:"Acid",c_base:"Base",c_salt:"Salt",c_solvent:"Solvent",c_ind:"Indicator",c_bio:"Biology",c_phys:"Physics",
