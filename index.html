@@ -2,8 +2,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Origo Sains</title>
 <style>
-:root{--bg:#fff;--sf:#eefafb;--tx:#12202b;--pr:#00bcd4;--wr:#ff9800;--ok:#4caf50;--gl:rgba(255,255,255,.82)}
-body[data-t=dark]{--bg:#121821;--sf:#1c2531;--tx:#fff;--pr:#26d9ee;--wr:#ffb033;--ok:#66c96a;--gl:rgba(18,24,33,.82)}
+:root{--bg:#fff;--sf:#eefafb;--tx:#12202b;--pr:#00bcd4;--wr:#ff9800;--ok:#4caf50;--gl:rgba(255,255,255,.85)}
+body[data-t=dark]{--bg:#121821;--sf:#1c2531;--tx:#fff;--pr:#26d9ee;--wr:#ffb033;--ok:#66c96a;--gl:rgba(18,24,33,.85)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}[hidden]{display:none!important}
 html,body{margin:0;height:100%;overflow:hidden;font:15px system-ui,sans-serif;background:var(--bg);color:var(--tx);touch-action:none;user-select:none}
 #c{position:fixed;inset:0;width:100%;height:100%}
@@ -13,36 +13,47 @@ button{background:var(--pr);color:#fff;border:0;font-weight:700;box-shadow:0 3px
 #top button{background:var(--gl);color:var(--pr);border:1.5px solid var(--pr);backdrop-filter:blur(6px);width:44px;height:44px;padding:0;font-size:18px;border-radius:50%}
 .ov{position:fixed;inset:0;background:linear-gradient(180deg,var(--bg) 40%,var(--sf));z-index:5;padding:64px 14px 14px;overflow:auto;touch-action:pan-y}
 #menu{text-align:center;padding-top:16vh}
-#menu h1{margin:0;font-size:44px;letter-spacing:1px;background:linear-gradient(90deg,var(--pr),var(--ok) 55%,var(--wr));-webkit-background-clip:text;background-clip:text;color:transparent}
+#menu h1{margin:0;font-size:44px;background:linear-gradient(90deg,var(--pr),var(--ok) 55%,var(--wr));-webkit-background-clip:text;background-clip:text;color:transparent}
 #menu p{color:var(--ok);margin:6px 0 28px;font-weight:600}
 #menu button{display:block;width:min(270px,82%);margin:12px auto;padding:15px;font-size:16px}
-#menu .o{background:var(--wr)}#menu small{display:block;margin:24px auto;max-width:310px;opacity:.7;line-height:1.5}
+#menu .o{background:var(--wr)}#menu small{display:block;margin:24px auto;max-width:320px;opacity:.7;line-height:1.5}
 .f{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:8px 0}#q{width:100%}
+#packs{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}#packs button{padding:6px 12px;background:var(--ok)}
+#cnt{font-weight:700;color:var(--pr);margin:6px 0}#startb{width:100%;padding:13px;background:var(--wr);margin:8px 0}
 .r{display:flex;align-items:center;gap:8px;padding:11px;margin:6px 0;background:var(--sf);border-radius:14px}
-.r b{flex:1}.r span{opacity:.7;font-size:13px}.r i{font-style:normal;color:#fff;border-radius:8px;padding:2px 7px;font-size:12px;background:var(--ok)}
-.r i.h2{background:var(--pr)}.r i.h3,.r i.h4{background:var(--wr)}.r button{padding:6px 12px}
+.r b{flex:1;font-size:14px}.r span{opacity:.7;font-size:12px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r i{font-style:normal;color:#fff;border-radius:8px;padding:2px 7px;font-size:12px;background:var(--ok)}
+.r i.h2{background:var(--pr)}.r i.h3,.r i.h4{background:var(--wr)}.r button{padding:6px 12px;min-width:48px}.r button.on{background:var(--ok)}
 #pg{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:10px}
 #hud{position:fixed;inset:0;pointer-events:none;z-index:2}#hud button,#js{pointer-events:auto}
 #x{position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1.5px var(--pr),0 0 8px var(--pr)}
-#pr:not(:empty){position:absolute;left:50%;transform:translateX(-50%);bottom:160px;background:var(--gl);border:1.5px solid var(--pr);padding:6px 16px;border-radius:20px;font-weight:700;color:var(--tx);backdrop-filter:blur(6px);white-space:nowrap}
+#hold{position:absolute;left:10px;top:10px;max-width:calc(100% - 230px);background:var(--gl);border:1.5px solid var(--ok);border-radius:14px;padding:6px 10px;font-size:12px;line-height:1.3;backdrop-filter:blur(6px)}
+#hold b{font-size:18px;margin-right:4px}
+#pr:not(:empty){position:absolute;left:50%;transform:translateX(-50%);bottom:255px;background:var(--gl);border:1.5px solid var(--pr);padding:6px 16px;border-radius:20px;font-weight:700;backdrop-filter:blur(6px);white-space:nowrap}
 #log:not(:empty){position:absolute;left:50%;transform:translateX(-50%);top:62px;max-width:86%;background:var(--wr);color:#fff;padding:8px 16px;border-radius:14px;font-weight:700;text-align:center;box-shadow:0 4px 14px #0004}
-#inf{position:absolute;left:10px;top:64px;background:var(--gl);backdrop-filter:blur(6px);border:1.5px solid var(--pr);border-radius:14px;padding:8px 12px;font-size:13px;min-width:140px;max-width:58%}
+#inf{position:absolute;left:10px;top:62px;background:var(--gl);backdrop-filter:blur(6px);border:1.5px solid var(--pr);border-radius:14px;padding:8px 12px;font-size:13px;min-width:140px;max-width:58%}
 #inf s{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;border:1px solid #0003}
-.bar{height:6px;border-radius:4px;background:var(--sf);margin:5px 0;overflow:hidden}.bar u{display:block;height:100%;background:var(--ok);transition:width .3s}
-#js{position:absolute;left:20px;bottom:22px;width:124px;height:124px;border-radius:50%;background:var(--gl);border:2px solid var(--pr);backdrop-filter:blur(4px)}
+.bar{height:6px;border-radius:4px;background:var(--sf);margin:5px 0;overflow:hidden}.bar u{display:block;height:100%;background:var(--ok)}
+#pager{position:absolute;left:50%;transform:translateX(-50%);bottom:210px;display:flex;gap:10px;align-items:center;background:var(--gl);border:1.5px solid var(--wr);border-radius:20px;padding:4px 8px;font-size:13px;font-weight:700;pointer-events:auto}
+#pager button{padding:4px 12px}
+#js{position:absolute;left:20px;bottom:22px;width:124px;height:124px;border-radius:50%;background:var(--gl);border:2px solid var(--pr)}
 #kn{position:absolute;left:40px;top:40px;width:44px;height:44px;border-radius:50%;background:var(--pr);box-shadow:0 3px 10px #0004}
-#act,#pour{position:absolute;right:16px;width:84px;height:84px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;line-height:1.1}
-#act b,#pour b{font-size:26px}#act small,#pour small{font-size:11px}
-#act{bottom:22px;background:var(--wr)}#pour{bottom:118px;background:var(--ok)}
+#act,#pour,#rx{position:absolute;right:16px;width:78px;height:78px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;line-height:1.1}
+#act b,#pour b,#rx b{font-size:24px}#act small,#pour small,#rx small{font-size:11px}
+#act{bottom:22px;background:var(--wr)}#pour{bottom:108px;background:var(--ok)}#rx{bottom:194px;background:#e53935}
 </style></head><body data-t="light">
 <canvas id="c"></canvas>
 <div id="top"><button id="bm">☰</button><button id="bb">📖</button><button id="bl">ID</button><button id="bt">◐</button></div>
-<div id="hud"><div id="x"></div><div id="log"></div><div id="inf" hidden></div><div id="pr"></div>
+<div id="hud"><div id="x"></div><div id="hold"></div><div id="log"></div><div id="inf" hidden></div><div id="pr"></div>
+<div id="pager" hidden><button id="pp2">‹</button><span id="pn2"></span><button id="pnx2">›</button></div>
 <div id="js"><div id="kn"></div></div>
-<button id="pour"><b>💧</b><small data-i="pour"></small></button><button id="act"><b>✋</b><small data-i="act"></small></button></div>
+<button id="rx"><b>⚗️</b><small data-i="react"></small></button><button id="pour"><b>💧</b><small data-i="pour"></small></button><button id="act"><b>✋</b><small data-i="act"></small></button></div>
 <div id="menu" class="ov"><h1 data-i="title"></h1><p data-i="sub"></p>
 <button id="go" class="o" data-i="enter"></button><button id="mb" data-i="book"></button><small data-i="hint"></small></div>
-<div id="book" class="ov" hidden><input id="q"><div class="f"><select id="fl"></select><select id="fc"></select><select id="fh"></select></div>
+<div id="book" class="ov" hidden><div id="cnt"></div>
+<div id="packs"><button data-p="basic" data-i="p_basic"></button><button data-p="ab" data-i="p_ab"></button><button data-p="salt" data-i="p_salt"></button><button data-p="org" data-i="p_org"></button><button data-p="all" data-i="p_all"></button><button data-p="none" data-i="p_none"></button></div>
+<button id="startb" data-i="start"></button>
+<input id="q"><div class="f"><select id="fl"></select><select id="fc"></select><select id="fh"></select></div>
 <div id="ls"></div><div id="pg"><button id="pp">‹</button><span id="pn"></span><button id="pnx">›</button></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="data.js"></script><script src="app.js"></script></body></html>
+<script src="materials.js"></script><script src="i18n.js"></script><script src="app.js"></script></body></html>
