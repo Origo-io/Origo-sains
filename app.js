@@ -1,25 +1,22 @@
-const $=s=>document.querySelector(s),lin=h=>new THREE.Color(h).convertSRGBToLinear(),rnd=Math.random;
-let lang=localStorage.lang||'id',theme=localStorage.theme||'light',entered=false,page=0,held=null,q=.9,mode='view',pagerT=0;
-const T=k=>I18N[lang][k]||k,vib=n=>navigator.vibrate&&navigator.vibrate(n),UP=new THREE.Vector3(0,1,0);
+const lin=h=>new THREE.Color(h).convertSRGBToLinear(),rnd=Math.random;
+let held=null,q=.65,qmax=.85,pagerT=0;
+const vib=n=>navigator.vibrate&&navigator.vibrate(n),UP=new THREE.Vector3(0,1,0);
 const ICON={tube:'🧪',beaker:'🥛',erlen:'⚗️',petri:'🧫',pipette:'💉',bottle:'🧴'};
-const byF={};MATS.forEach(m=>{if(!byF[m.f])byF[m.f]=m});
-const BASIC=['HCl','H2SO4','HNO3','NaOH','KOH','NaHCO3','CaCO3','NaCl','CuSO4','AgNO3','KMnO4','Zn','Mg','Na','Fe','H2O','H2O2','MnO2','C6H12O6','CH3COOH','Na2CO3','NH3','KI','BaCl2','C2H5OH','C12H22O11','C20H14O4','Pb(NO3)2','FeCl3','NaOH'].map(f=>byF[f]&&byF[f].code).filter(Boolean);
-let sel=new Set(JSON.parse(localStorage.sel||'null')||BASIC);const saveSel=()=>localStorage.sel=JSON.stringify([...sel]);
 // ================= RENDERER & CAHAYA =================
-const cv=$('#c'),R=new THREE.WebGLRenderer({canvas:cv,antialias:true}),S=new THREE.Scene(),C=new THREE.PerspectiveCamera(70,1,.05,40),rc=new THREE.Raycaster();
+const cv=$('#c'),R=new THREE.WebGLRenderer({canvas:cv,antialias:false}),S=new THREE.Scene(),C=new THREE.PerspectiveCamera(70,1,.05,40),rc=new THREE.Raycaster();
 R.outputEncoding=THREE.sRGBEncoding;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.05;R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;
 C.rotation.order='YXZ';C.position.set(0,1.6,4.2);S.add(C);
 const hemi=new THREE.HemisphereLight(0xffffff,0x9fb4bd,.5);S.add(hemi);
-const sun=new THREE.DirectionalLight(0xffffff,.75);sun.position.set(4,9,5);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+const sun=new THREE.DirectionalLight(0xffffff,.75);sun.position.set(4,9,5);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);
 Object.assign(sun.shadow.camera,{left:-10,right:10,top:10,bottom:-10,near:1,far:30});sun.shadow.bias=-.0004;S.add(sun);
 const pls=[[0,3.6,-3],[0,3.6,2.5]].map(p=>{const l=new THREE.PointLight(0xfff2dc,.5,14);l.position.set(...p);S.add(l);return l});
 const fl=new THREE.PointLight(0xffa040,0,5);S.add(fl);
 function resize(){R.setSize(innerWidth*q,innerHeight*q,false);C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix()}
 addEventListener('resize',resize);resize();
 // lingkungan pantulan (kaca & logam tampak nyata)
-{const pm=new THREE.PMREMGenerator(R),es=new THREE.Scene();es.add(new THREE.Mesh(new THREE.BoxGeometry(30,12,30),new THREE.MeshBasicMaterial({color:0xcfe9ef,side:THREE.BackSide})));
+try{const pm=new THREE.PMREMGenerator(R),es=new THREE.Scene();es.add(new THREE.Mesh(new THREE.BoxGeometry(30,12,30),new THREE.MeshBasicMaterial({color:0xcfe9ef,side:THREE.BackSide})));
  [[-5,5.9,-3],[5,5.9,-3],[0,5.9,4]].forEach(p=>{const l=new THREE.Mesh(new THREE.PlaneGeometry(6,2),new THREE.MeshBasicMaterial({color:new THREE.Color(7,7,7)}));l.position.set(...p);l.rotation.x=Math.PI/2;es.add(l)});
- S.environment=pm.fromScene(es,.04).texture}
+ S.environment=pm.fromScene(es,.04).texture}catch(e){showErr('env: '+e.message)}
 // ================= TEKSTUR PROSEDURAL HD =================
 function tex(w,h,fn,rep,raw){const c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);if(rep){t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rep[0],rep[1])}t.anisotropy=4;if(!raw)t.encoding=THREE.sRGBEncoding;return t}
 const speck=(g,w,h,n,c,s)=>{for(let i=0;i<n;i++){g.fillStyle=c();g.fillRect(rnd()*w,rnd()*h,s,s)}};
@@ -84,7 +81,7 @@ const GLP=[...Array(10).fill('tube'),...Array(5).fill('beaker'),...Array(5).fill
 const gc=cabinet('glass',-6.6,1),cc=cabinet('chem',6.6,-1);
 function spawn(cab,c){if(c.obj||!c.spec)return;const o=cab.kind=='glass'?vessel(c.spec):bottle(c.spec);o.position.set(c.x,c.y,c.z);o.rotation.y=c.rot;o.userData.cell=c;o.userData.cab=cab.kind;c.obj=o}
 gc.cells.forEach((c,i)=>{c.spec=GLP[i];spawn(gc,c)});
-let sortedC={},chemList=[],cpage=0;const sortedAll=()=>sortedC[lang]||(sortedC[lang]=MATS.slice().sort((a,b)=>a[lang].localeCompare(b[lang])));
+let chemList=[],cpage=0;
 function fillChem(){chemList=sortedAll().filter(m=>sel.has(m.code));const pages=Math.max(1,Math.ceil(chemList.length/30));cpage=Math.min(cpage,pages-1);
  cc.cells.forEach((c,i)=>{if(c.obj){kill(c.obj);c.obj=null}const m=chemList[cpage*30+i];c.spec=m?m.code:null;spawn(cc,c)});$('#pn2').textContent=`${T('rack')} ${cpage+1}/${pages} · ${chemList.length}`}
 $('#pp2').onclick=()=>{if(cpage>0){cpage--;fillChem();pagerT=performance.now()+4000}};$('#pnx2').onclick=()=>{if((cpage+1)*30<chemList.length){cpage++;fillChem();pagerT=performance.now()+4000}};
@@ -105,8 +102,13 @@ let beoHead,pa=0,AC;
  const hp=new THREE.Mesh(new THREE.BoxGeometry(.5,.7,.5),new THREE.MeshBasicMaterial());hp.visible=false;hp.position.y=1.2;g.add(hp);
  g.userData={kind:'parrot'};roots.push(g);S.add(g)})();
 function squawk(){pa=1.4;vib([30,40,30]);say('🦜 '+T('tip'+(1+Math.floor(rnd()*5))));
- try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;o.type='square';o.connect(g);g.connect(AC.destination);
+ try{if(!snd)throw 0;AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;o.type='square';o.connect(g);g.connect(AC.destination);
   o.frequency.setValueAtTime(900,t);o.frequency.exponentialRampToValueAtTime(1900,t+.12);o.frequency.exponentialRampToValueAtTime(700,t+.3);g.gain.setValueAtTime(.07,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.start(t);o.stop(t+.36)}catch(e){}}
+// ---- efek suara (sintesis WebAudio, tanpa file) ----
+let AC2;function ac(){try{AC2=AC2||new (window.AudioContext||window.webkitAudioContext)();if(AC2.state=='suspended')AC2.resume();return AC2}catch(e){}}
+function noise(dur,vol,f0,f1,type){if(!snd)return;const a=ac();if(!a)return;const n=a.sampleRate*dur|0,b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=rnd()*2-1;
+ const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain(),t=a.currentTime;s.buffer=b;f.type=type||'bandpass';f.frequency.setValueAtTime(f0,t);f.frequency.exponentialRampToValueAtTime(f1,t+dur);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f);f.connect(g);g.connect(a.destination);s.start(t)}
+function tone(fq,dur,vol){if(!snd)return;const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime;o.type='sine';o.frequency.setValueAtTime(fq,t);o.frequency.exponentialRampToValueAtTime(fq*1.5,t+dur);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+dur)}
 // ================= TANGAN KANAN =================
 const HA=new THREE.Group();HA.position.set(.3,-.3,-.6);C.add(HA);
 const hm=(c,o)=>mat(c,Object.assign({roughness:.55,depthTest:false,depthWrite:false},o));const skin=hm('#E8B994'),sleeve=hm('#ffffff',{roughness:.7}),cuff=hm('#00bcd4');
@@ -146,7 +148,10 @@ function reactV(g){const d=g.userData;if(d.rx)return;if(d.items.length<2)return 
  if(!n)return say(T('none'));
  const from=liqCol(d),tc=fx.col||(fx.ppt?'#E6F5F8':null);d.rx={t:0,dur:3.2,fx,from,to:tc?vis(tc).convertSRGBToLinear():from.clone()};
  if(fx.ppt)d.ppt={col:fx.ppt,amt:0};if(fx.fire){const f=flames(d);if(!f.parent)g.add(f)}
- say(fx.msgs.map(T).join(' '));vib([40,30,60])}
+ say(fx.msgs.map(T).join(' '));vib([40,30,60]);
+ if(fx.bub)noise(3,.12,3000,6000,'highpass');if(fx.fire||fx.flash)noise(1.8,.28,500,70,'lowpass');if(fx.smoke)noise(2.2,.07,1600,700);if(fx.ppt)tone(660,.35,.05);
+ JOURNAL.unshift({t:new Date().toTimeString().slice(0,5),v:d.type,a:d.items.map(i=>i.code),m:fx.msgs});if(JOURNAL.length>50)JOURNAL.pop();try{localStorage.jr=JSON.stringify(JOURNAL)}catch(e){}
+ const mm=missionCheck(d.items.map(i=>i.code),fx.msgs);if(mm)setTimeout(()=>{showPop(mm);tone(784,.5,.07)},3500)}
 // ---- partikel ----
 const bubs=[],smk=[];for(let i=0;i<70;i++){const m=new THREE.Mesh(new THREE.SphereGeometry(.007,6,5),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.85}));m.visible=false;S.add(m);bubs.push({m,l:0})}
 for(let i=0;i<30;i++){const m=new THREE.Mesh(new THREE.SphereGeometry(.03,8,6),new THREE.MeshBasicMaterial({color:0xd8dde0,transparent:true,opacity:0,depthWrite:false}));m.visible=false;S.add(m);smk.push({m,l:0,L:1})}
@@ -170,7 +175,7 @@ function act(o){o=o||look();const k=o&&o.userData.kind;
 function pour(o){if(!playing())return;if(!held)return say(T('hand_empty'));o=o||look();if(!o||o.userData.kind!='vessel')return say(T('aim'));const u=held.userData;let ok=false;
  if(u.kind=='bottle'){ok=add(o,u.code,25);pcol.copy(vis(M[u.code].col)).convertSRGBToLinear()}
  else if(o!==held){if(!tot(u))return say(T('empty'));pcol.copy(u.lm.material.color);take(held,25).forEach(x=>add(o,x.code,x.ml));ok=true}
- if(ok){pt=.8;ptgt=o;vib(10)}}
+ if(ok){pt=.8;ptgt=o;vib(10);noise(.6,.07,2600,1400)}}
 function reactBtn(){if(!playing())return;const o=look(),g=o&&o.userData.kind=='vessel'?o:(held&&held.userData.kind=='vessel'?held:null);if(!g)return say(T('aimv'));reactV(g)}
 const nm=o=>o.userData.kind=='bottle'?M[o.userData.code][lang]:T(o.userData.type);
 const desc=o=>{const d=o.userData,t=tot(d);return `<b>${nm(o)}</b> · ${Math.round(d.temp)}°C<div class="bar"><u style="width:${Math.min(100,t/d.cap*100)}%"></u></div>`+(d.items.map(i=>`<div><s style="background:${M[i.code].col}"></s>${M[i.code][lang]} ${Math.round(i.ml)}ml</div>`).join('')||'<div>—</div>')};
@@ -178,10 +183,9 @@ function updHold(){const h=held,u=h&&h.userData;$('#hold').innerHTML=h?`<b>${ICO
 function hud(){const o=look(),k=o&&o.userData.kind;if(o!==hl){glow(hl,false);glow(o,true);hl=o}if(o&&o.userData.cab=='chem')pagerT=performance.now()+4000;
  let p='';if(k=='door')p=T(o.userData.open?'close':'open');else if(k=='slot')p=held?T('place'):'';else if(k=='parrot')p='🦜 '+T('beo');else if(o)p=(held?'':T('pick')+' ')+nm(o);
  $('#pr').textContent=p;$('#pager').hidden=performance.now()>pagerT;const v=k=='vessel'?o:held&&held.userData.kind=='vessel'?held:null;$('#inf').hidden=!v;if(v)$('#inf').innerHTML=desc(v);updHold()}
-let lt=0;function say(m){$('#log').textContent=m;clearTimeout(lt);lt=setTimeout(()=>$('#log').textContent='',4000)}
 // ================= KONTROL =================
 let yaw=0,pitch=0,ty=0,tp=0,vx=0,vz=0,bob=0,mv={x:0,z:0},keys={},lp=null,tap=null,fr=0,last=0,fa=0,fc=0;
-const playing=()=>entered&&$('#book').hidden&&$('#menu').hidden;
+const playing=()=>entered&&!uiOpen();
 cv.addEventListener('pointerdown',e=>{lp=[e.clientX,e.clientY];tap={t:performance.now(),m:0}});
 cv.addEventListener('pointermove',e=>{if(!lp||!playing())return;const dx=e.clientX-lp[0],dy=e.clientY-lp[1];if(tap)tap.m+=Math.abs(dx)+Math.abs(dy);ty-=dx*.006;tp=Math.max(-1.2,Math.min(1.2,tp-dy*.006));lp=[e.clientX,e.clientY]});
 cv.addEventListener('pointerup',e=>{if(tap&&tap.m<12&&performance.now()-tap.t<350&&playing()){const o=look({x:e.clientX/innerWidth*2-1,y:-e.clientY/innerHeight*2+1});if(o){held&&o.userData.kind=='vessel'?pour(o):act(o)}}tap=null});
@@ -192,8 +196,8 @@ const je=()=>{js.dataset.a='';mv={x:0,z:0};kn.style.transform=''};
 js.addEventListener('pointerdown',e=>{js.setPointerCapture(e.pointerId);js.dataset.a=1;jm(e)});js.addEventListener('pointermove',e=>js.dataset.a&&jm(e));js.addEventListener('pointerup',je);js.addEventListener('pointercancel',je);
 addEventListener('keydown',e=>{const k=e.key.toLowerCase();keys[k]=1;if(!playing())return;if(k=='e')act();if(k=='f')pour();if(k=='r')reactBtn()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=0);
 $('#act').onclick=()=>playing()&&act();$('#pour').onclick=()=>pour();$('#rx').onclick=reactBtn;
-function loop(t){requestAnimationFrame(loop);const dt=Math.min(.05,(t-last)/1000||.016);last=t;const k=Math.min(1,dt*12);
- fa+=dt;fc++;if(fa>2){const f=fc/fa;if(f<26&&q>.55){q-=.1;resize()}else if(f>56&&q<1){q+=.05;resize()}fa=fc=0}
+function frame(t){if(uiOpen()){last=t;return}const dt=Math.min(.05,(t-last)/1000||.016);last=t;const k=Math.min(1,dt*12);
+ fa+=dt;fc++;if(fa>2){const f=fc/fa;if(f<26&&q>.45){q-=.1;resize()}else if(f>56&&q<qmax){q=Math.min(qmax,q+.05);resize()}fa=fc=0}
  if(playing()){let x=mv.x+(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),z=mv.z+(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0);const l=Math.hypot(x,z);if(l>1){x/=l;z/=l}
   const a=Math.min(1,dt*9);vx+=(x*2.4-vx)*a;vz+=(z*2.4-vz)*a;const p=C.position;p.x+=(Math.cos(yaw)*vx+Math.sin(yaw)*vz)*dt;p.z+=(-Math.sin(yaw)*vx+Math.cos(yaw)*vz)*dt;
   p.x=Math.max(-5.6,Math.min(5.6,p.x));p.z=Math.max(-5.4,Math.min(5.4,p.z));
@@ -220,34 +224,11 @@ function loop(t){requestAnimationFrame(loop);const dt=Math.min(.05,(t-last)/1000
  if(pa>0){pa-=dt;beoHead.rotation.z=Math.sin(t*.02)*.4*Math.min(1,pa);beoHead.rotation.x=Math.sin(t*.015)*.2*Math.min(1,pa)}
  doors.forEach(d=>{const u=d.userData;u.t+=((u.open?1:0)-u.t)*Math.min(1,dt*7);d.rotation.y=u.f*u.dz*1.75*(u.t*u.t*(3-2*u.t))});
  R.render(S,C)}
+function loop(t){requestAnimationFrame(loop);try{frame(t)}catch(e){if(!loop.e){loop.e=1;showErr('loop: '+e.message)}}}
 requestAnimationFrame(loop);
-// ================= BUKU INDEKS / PILIH ZAT =================
-function opts(sel_,arr){sel_.innerHTML=arr.map(a=>`<option value="${a[0]}">${a[1]}</option>`).join('')}
-function buildFilters(){const l=$('#fl').value,c=$('#fc').value,h=$('#fh').value;
- opts($('#fl'),[['',T('letter')+' ▾'],...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(x=>[x,x])]);
- opts($('#fc'),[['',T('cat')+' ▾'],['chem/acid',T('c_acid')],['chem/base',T('c_base')],['chem/salt',T('c_salt')],['chem/oxide',T('c_oxide')],['chem/organic',T('c_org')],['chem/solvent',T('c_solv')],['chem/indicator',T('c_ind')],['chem/gas',T('c_gas')],['elem',T('c_elem')],['bio',T('c_bio')],['phys',T('c_phys')]]);
- opts($('#fh'),[['',T('hz')+' ▾'],...[0,1,2,3,4].map(x=>[x,'H'+x])]);$('#fl').value=l;$('#fc').value=c;$('#fh').value=h}
-const cntText=()=>`${T('selected')}: ${sel.size} / ${MATS.length}`;
-function renderBook(){const qq=$('#q').value.toLowerCase(),L=$('#fl').value,c=$('#fc').value,h=$('#fh').value;
- const r=sortedAll().filter(m=>{const n=m[lang];return(!qq||n.toLowerCase().includes(qq)||m.f.toLowerCase().includes(qq))&&(!L||n[0].toUpperCase()==L)&&(!c||m.cat.startsWith(c))&&(h===''||m.hz==h)}),N=20,pages=Math.max(1,Math.ceil(r.length/N));page=Math.min(page,pages-1);
- $('#ls').innerHTML=r.slice(page*N,page*N+N).map(m=>{const on=sel.has(m.code);return `<div class="r"><b>${m[lang]}</b><span>${m.f}</span><i class="h${m.hz}">H${m.hz}</i>`+(mode=='load'?`<button data-t="${m.code}" class="${on?'on':''}">${on?'✓':'＋'}</button>`:mode=='play'?`<button data-c="${m.code}">${on?T('fetch'):T('bring')}</button>`:'')+'</div>'}).join('');
- $('#pn').textContent=(page+1)+' / '+pages;$('#cnt').textContent=cntText();$('#cnt').hidden=$('#packs').hidden=$('#startb').hidden=mode!='load'}
-function openBook(m){mode=m;$('#menu').hidden=true;$('#book').hidden=false;renderBook()}
-['#q','#fl','#fc','#fh'].forEach(s=>$(s).addEventListener('input',()=>{page=0;renderBook()}));
-$('#pp').onclick=()=>{if(page>0){page--;renderBook()}};$('#pnx').onclick=()=>{page++;renderBook()};
-const PK={basic:()=>BASIC,ab:()=>MATS.filter(m=>/^chem\/(acid|base)/.test(m.cat)).map(m=>m.code),salt:()=>MATS.filter(m=>m.cat=='chem/salt'||m.cat=='chem/oxide').map(m=>m.code),org:()=>MATS.filter(m=>m.cat=='chem/organic').map(m=>m.code),all:()=>MATS.map(m=>m.code),none:()=>[]};
-$('#packs').onclick=e=>{const p=e.target.dataset.p;if(!p)return;sel=new Set(PK[p]());saveSel();renderBook()};
-$('#startb').onclick=()=>{if(!sel.size)BASIC.forEach(c=>sel.add(c));saveSel();entered=true;$('#book').hidden=true;fillChem();updHold()};
-$('#ls').onclick=e=>{const b=e.target.closest('button');if(!b)return;const t=b.dataset.t,c=b.dataset.c;
- if(t){sel.has(t)?sel.delete(t):sel.add(t);saveSel();b.textContent=sel.has(t)?'✓':'＋';b.classList.toggle('on',sel.has(t));$('#cnt').textContent=cntText()}
- else if(c){if(!sel.has(c)){sel.add(c);saveSel();fillChem();say(T('brought')+M[c][lang]);renderBook();return}if(held)return say(T('hand_full'));
-  const o=bottle(c);o.position.copy(C.position).add(new THREE.Vector3(0,-.3,-.5));pick(o);$('#book').hidden=true;say(T('fetched')+M[c][lang])}};
-// ================= MENU / TEMA / BAHASA =================
-function applyI18n(){document.documentElement.lang=lang;document.querySelectorAll('[data-i]').forEach(e=>e.textContent=T(e.dataset.i));$('#q').placeholder=T('search');$('#bl').textContent=lang.toUpperCase();buildFilters();renderBook();updHold();if(entered)fillChem()}
-function applyTheme(){const d=theme=='dark';document.body.dataset.t=theme;S.background=new THREE.Color(d?0x121821:0xffffff);themed.forEach(a=>a[0].material.color.copy(lin(d?a[2]:a[1])));R.toneMappingExposure=d?.8:1.05;hemi.intensity=d?.3:.5;sun.intensity=d?.4:.75}
-$('#bl').onclick=()=>{lang=lang=='id'?'en':'id';localStorage.lang=lang;applyI18n()};
-$('#bt').onclick=()=>{theme=theme=='dark'?'light':'dark';localStorage.theme=theme;applyTheme()};
-$('#bm').onclick=()=>{$('#menu').hidden=!$('#menu').hidden;$('#book').hidden=true};
-$('#bb').onclick=()=>{if($('#book').hidden)openBook(entered?'play':'view');else $('#book').hidden=true};
-$('#mb').onclick=()=>openBook('view');$('#go').onclick=()=>openBook('load');
-applyTheme();applyI18n();
+// ================= HOOK KE UI =================
+GAME.fillChem=fillChem;GAME.start=()=>{fillChem();updHold()};GAME.lang=()=>{updHold();if(entered)fillChem()};
+GAME.theme=d=>{S.background=new THREE.Color(d?0x121821:0xffffff);themed.forEach(a=>a[0].material.color.copy(lin(d?a[2]:a[1])));R.toneMappingExposure=d?.8:1.05;hemi.intensity=d?.3:.5;sun.intensity=d?.4:.75};
+GAME.fetch=c=>{if(held){say(T('hand_full'));return false}const o=bottle(c);o.position.copy(C.position).add(new THREE.Vector3(0,-.3,-.5));pick(o);say(T('fetched')+M[c][lang]);return true};
+GAME.qual=n=>{qmax=[.6,.85,1][n];q=Math.min(q,qmax);R.shadowMap.enabled=n>0;sun.castShadow=n>0;S.traverse(o=>{if(o.material)[].concat(o.material).forEach(m=>m.needsUpdate=true)});resize()};
+GAME.qual(qual);applyTheme();applyI18n();
