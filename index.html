@@ -41,19 +41,27 @@ button{background:var(--pr);color:#fff;border:0;font-weight:700;box-shadow:0 3px
 #act,#pour,#rx{position:absolute;right:16px;width:78px;height:78px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;line-height:1.1}
 #act b,#pour b,#rx b{font-size:24px}#act small,#pour small,#rx small{font-size:11px}
 #act{bottom:22px;background:var(--wr)}#pour{bottom:108px;background:var(--ok)}#rx{bottom:194px;background:#e53935}
+#err{position:fixed;left:8px;right:8px;bottom:8px;z-index:30;background:#c62828;color:#fff;padding:10px 12px;border-radius:12px;font-size:12px;word-break:break-word}
+.row2{display:flex;gap:8px;justify-content:center;margin:12px auto}.row2 button{margin:0!important;width:auto!important;flex:1;max-width:132px;padding:11px!important;background:var(--ok)}
+.jr div{flex:1;font-size:13px;line-height:1.5}.jr em{color:var(--wr);font-style:normal}
+#pop{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(88%,360px);z-index:25;background:var(--bg);border:2px solid var(--ok);border-radius:18px;padding:16px;box-shadow:0 10px 40px #0006;text-align:center}
+#pop .eq{font-weight:800;color:var(--pr);font-size:17px}#pop button{margin-top:8px;padding:10px 30px;background:var(--ok)}
+.r button[data-m]{background:var(--wr)}
 </style></head><body data-t="light">
-<canvas id="c"></canvas>
+<canvas id="c"></canvas><div id="err" hidden></div>
 <div id="top"><button id="bm">☰</button><button id="bb">📖</button><button id="bl">ID</button><button id="bt">◐</button></div>
 <div id="hud"><div id="x"></div><div id="hold"></div><div id="log"></div><div id="inf" hidden></div><div id="pr"></div>
 <div id="pager" hidden><button id="pp2">‹</button><span id="pn2"></span><button id="pnx2">›</button></div>
 <div id="js"><div id="kn"></div></div>
 <button id="rx"><b>⚗️</b><small data-i="react"></small></button><button id="pour"><b>💧</b><small data-i="pour"></small></button><button id="act"><b>✋</b><small data-i="act"></small></button></div>
 <div id="menu" class="ov"><h1 data-i="title"></h1><p data-i="sub"></p>
-<button id="go" class="o" data-i="enter"></button><button id="mb" data-i="book"></button><small data-i="hint"></small></div>
+<button id="go" class="o" data-i="enter"></button><button id="rs" class="o" hidden data-i="resume"></button><button id="mm" data-i="missions"></button><button id="mb" data-i="book"></button><button id="mj" data-i="journal"></button><div class="row2"><button id="mq"></button><button id="ms"></button></div><small data-i="hint"></small></div>
 <div id="book" class="ov" hidden><div id="cnt"></div>
 <div id="packs"><button data-p="basic" data-i="p_basic"></button><button data-p="ab" data-i="p_ab"></button><button data-p="salt" data-i="p_salt"></button><button data-p="org" data-i="p_org"></button><button data-p="all" data-i="p_all"></button><button data-p="none" data-i="p_none"></button></div>
 <button id="startb" data-i="start"></button>
 <input id="q"><div class="f"><select id="fl"></select><select id="fc"></select><select id="fh"></select></div>
 <div id="ls"></div><div id="pg"><button id="pp">‹</button><span id="pn"></span><button id="pnx">›</button></div></div>
+<div id="jr" class="ov" hidden><h3 data-i="journal"></h3><div id="jl"></div></div>
+<div id="mo" class="ov" hidden><h3 data-i="missions"></h3><div id="ml"></div></div><div id="pop" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="materials.js"></script><script src="i18n.js"></script><script src="app.js"></script></body></html>
+<script src="materials.js"></script><script src="i18n.js"></script><script src="ui.js"></script><script src="app.js"></script></body></html>
